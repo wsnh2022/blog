@@ -1,23 +1,44 @@
-# My Blog
+# My Professional Markdown Blog ✨
 
-## Setup Instructions
+A professional-grade, high-performance blog built with **React**, **Vite**, and **Vanilla CSS**. This blog automatically transforms markdown files into beautiful blog posts with a premium design system.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/wsnh2022/blog.git
-   ```
-2. Navigate into the project directory:
-   ```bash
-   cd blog
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+## 🚀 Features
 
-## Usage Instructions
+-   **Dynamic Post Discovery:** Simply drop `.md` files into `src/posts/` and they appear automatically.
+-   **Premium Aesthetics:** Modern design with Glassmorphism and responsive layouts.
+-   **Dark & Light Mode:** Seamless theme switching with persistence.
+-   **Syntax Highlighting:** Professional code blocks via `react-syntax-highlighter`.
+-   **Ultra-Lightweight:** Focused on performance and zero bloat (Vite-based).
+-   **Security First:** Audited and dependency-clean.
 
-To start the blog, run:
+## 🛠️ Tech Stack
+
+-   **React 18**
+-   **Vite**
+-   **Vanilla CSS**
+-   **React Markdown**
+-   **Prism Syntax Highlighting**
+
+## 💻 Getting Started
+
+### Installation
+
 ```bash
-npm start
+npm install
 ```
+
+### Development
+
+```bash
+npm run dev
+```
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+---
+
+*Built with ❤️ for a professional writing experience.*
