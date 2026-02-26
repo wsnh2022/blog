@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -42,15 +43,31 @@ const Post = () => {
 
                 // 2. CHECK FOR REMOTE URL
                 const firstLine = content.split('\n')[0].trim();
+                let remoteBaseUrl = '';
+
                 if (firstLine.startsWith('https://github.com/')) {
                     try {
-                        const rawUrl = firstLine
+                        const rawUrlBase = firstLine
                             .replace('github.com', 'raw.githubusercontent.com')
-                            .replace('/blob/', '/');
+                            .replace('/blob/', '/')
+                            .split('/').slice(0, -1).join('/') + '/';
 
-                        const response = await fetch(rawUrl);
+                        remoteBaseUrl = rawUrlBase;
+
+                        const response = await fetch(firstLine.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/'));
                         if (response.ok) {
-                            content = await response.text();
+                            let remoteContent = await response.text();
+
+                            // DYNAMICALLY REWRITE RELATIVE ASSET LINKS
+                            const rewriteLinks = (text, base) => {
+                                // Fix Markdown images/links: ![alt](assets/...) or ![alt](./assets/...)
+                                text = text.replace(/(!\[.*?\]\()(\.\/|)(?!(http|data:))(.*?\))/g, `$1${base}$4`);
+                                // Fix HTML images/videos: src="assets/..." or src="./assets/..."
+                                text = text.replace(/(src=")(\.\/|)(?!(http|data:))(.*?")/g, `$1${base}$4`);
+                                return text;
+                            };
+
+                            content = rewriteLinks(remoteContent, remoteBaseUrl);
 
                             // Try to get title from remote content if not in local frontmatter
                             if (!title || title === id.split(/[-_]/).join(' ').replace(/\b\w/g, l => l.toUpperCase())) {
@@ -119,6 +136,7 @@ const Post = () => {
                     <div className="post-content">
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
+                            rehypePlugins={[rehypeRaw]}
                             components={{
                                 code({ node, inline, className, children, ...props }) {
                                     const match = /language-(\w+)/.exec(className || '');
@@ -138,8 +156,10 @@ const Post = () => {
                                     );
                                 },
                                 img({ node, ...props }) {
-                                    // GitHub relative images fix would go here if needed
-                                    return <img style={{ maxWidth: '100%', borderRadius: '1rem' }} {...props} />
+                                    return <img style={{ maxWidth: '100%', borderRadius: '1rem', marginTop: '1.5rem', marginBottom: '1.5rem', display: 'block', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} {...props} />
+                                },
+                                video({ node, ...props }) {
+                                    return <video style={{ maxWidth: '100%', borderRadius: '1rem', marginTop: '1.5rem', marginBottom: '1.5rem', display: 'block', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} {...props} />
                                 }
                             }}
                         >

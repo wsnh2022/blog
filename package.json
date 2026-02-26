@@ -8,6 +8,7 @@
     "react-markdown": "^10.1.0",
     "react-router-dom": "^5.3.4",
     "react-syntax-highlighter": "^16.1.0",
+    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1"
   },
   "scripts": {
