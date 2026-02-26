@@ -28,5 +28,5 @@ yarn-error.log*
 # Vite
 .vite/
 
-# push bat file
+# ignore bat file
 publish.bat
