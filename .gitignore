@@ -29,4 +29,4 @@ yarn-error.log*
 .vite/
 
 # ignore bat file
-publish.bat
+Dynamic-GitSync-Anyrepo.bat
