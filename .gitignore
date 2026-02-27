@@ -30,3 +30,4 @@ yarn-error.log*
 
 # ignore bat file
 Dynamic-GitSync-Anyrepo.bat
+deploy-log.txt
