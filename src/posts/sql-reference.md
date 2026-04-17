@@ -1,7 +1,7 @@
 ---
 title: "SQL Quick Reference"
 date: "2026-04-17"
-image: "https://github.com/wsnh2022/yogi-porfolio/blob/main/assets/images/projects/sql-reference.png?raw=true"
+image: "https://github.com/wsnh2022/wsnh2022.github.io/blob/main/assets/images/projects/sql-reference.png?raw=true"
 ---
 
 # SQL Quick Reference

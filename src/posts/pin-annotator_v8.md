@@ -1,7 +1,7 @@
 ---
 title: "Pin Annotator - Private Image Annotation"
 date: "2026-04-17"
-image: "https://github.com/wsnh2022/yogi-porfolio/blob/main/assets/images/projects/pin-annotator.png?raw=true"
+image: "https://github.com/wsnh2022/wsnh2022.github.io/blob/main/assets/images/projects/pin-annotator.png?raw=true"
 ---
 
 # Pin Annotator — Private Image Annotation

@@ -1,7 +1,7 @@
 ---
 title: "AHKMenu - AutoHotkey Menu Builder"
 date: "2026-04-17"
-image: "https://github.com/wsnh2022/yogi-porfolio/blob/main/assets/images/projects/ahkmenu_export.gif?raw=true"
+image: "https://github.com/wsnh2022/wsnh2022.github.io/blob/main/assets/images/projects/ahkmenu_export.gif?raw=true"
 ---
 
 # AHKMenu — AutoHotkey Menu Builder
