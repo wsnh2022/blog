@@ -28,6 +28,9 @@ yarn-error.log*
 # Vite
 .vite/
 
+# Claude Code internals
+.claude/
+
 # ignore bat file
 Dynamic-GitSync-Anyrepo.bat
 deploy-log.txt
