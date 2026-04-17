@@ -32,6 +32,7 @@ yarn-error.log*
 .claude/
 
 # ignore bat file
+YOUR-REPO-NAME.md
 deploy-log.txt
 gitsync.bat 
 .gitsync.lock 
