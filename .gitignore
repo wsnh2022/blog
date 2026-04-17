@@ -30,5 +30,6 @@ yarn-error.log*
 
 # ignore bat file
 Dynamic-GitSync-Anyrepo.bat
-deploy-log.txtgitsync.bat 
+deploy-log.txt
+gitsync.bat 
 .gitsync.lock 
