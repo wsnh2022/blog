@@ -4,8 +4,6 @@ date: "2026-04-17"
 image: "https://github.com/wsnh2022/wsnh2022.github.io/blob/main/assets/images/projects/ahkmenu.png?raw=true"
 ---
 
-# AHKMenu - AutoHotkey Menu Builder
-
 A browser-based tool for visually building AutoHotkey v2 context menus. Configure icons, labels, and actions - then export a ready-to-run `.ahk` script with one click.
 
 **Live Demo:** [wsnh2022.github.io/ahkmenu](https://wsnh2022.github.io/ahkmenu)
