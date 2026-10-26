@@ -2,6 +2,8 @@
 title: "SQL Quick Reference"
 date: "2026-04-17"
 image: "https://github.com/wsnh2022/wsnh2022.github.io/blob/main/assets/images/projects/sql-reference.png?raw=true"
+description: "A searchable one-page SQL cheat sheet: syntax, joins, indexes and tuning tips."
+tags: "sql, reference, webapp"
 ---
 
 A fast, searchable SQL cheat sheet covering syntax, clauses, joins, indexes, and optimization tips. Built as a single-page reference for day-to-day SQL work.

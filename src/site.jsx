@@ -1,11 +1,19 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
-import { posts } from './posts';
+import logo from '../logo.png';
+import { posts, formatDate } from './posts';
 
 const SITE = 'wsnh2022';
 const DEFAULT_DESCRIPTION =
     'Write-ups of the tools I build and notes on what I learn, each project post read live from its GitHub README.';
+
+export const AUTHOR = {
+    name: 'Yoghesh',
+    avatar: 'https://github.com/wsnh2022.png?size=96',
+    github: 'https://github.com/wsnh2022',
+    bio: 'I build small automation tools: AutoHotkey, n8n, Electron and AI helpers.',
+};
 
 export const setPageMeta = (title, description = DEFAULT_DESCRIPTION) => {
     document.title = title ? `${title} | ${SITE} blog` : `${SITE} blog: tools I build and what I learn`;
@@ -39,49 +47,88 @@ export const useReveal = (key, tagSelector) => {
     }, [key]);
 };
 
-export const SiteBar = () => (
-    <nav className="bar" aria-label="Site">
-        <Link to={{ pathname: '/', hash: '#posts' }} className="bar-link">Posts</Link>
-        <Link to="/" className="wordmark">{SITE}</Link>
-        <div className="bar-end">
-            <a href="https://github.com/wsnh2022" className="bar-link">GitHub</a>
-            <ThemeToggle />
+export const SiteBar = () => {
+    const history = useHistory();
+    const location = useLocation();
+    const query = new URLSearchParams(location.search).get('q') || '';
+
+    const search = (value) => {
+        const to = { pathname: '/', search: value ? `?q=${encodeURIComponent(value)}` : '' };
+        if (location.pathname === '/') history.replace(to);
+        else history.push(to);
+    };
+
+    return (
+        <header className="bar">
+            <nav className="bar-inner" aria-label="Site">
+                <Link to="/" className="logo">
+                    <img src={logo} alt="Yoghesh's blog, home" width="40" height="40" />
+                </Link>
+                <div className="search" role="search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m20 20-3.5-3.5" />
+                    </svg>
+                    <input
+                        type="search"
+                        placeholder="Search posts..."
+                        aria-label="Search posts"
+                        value={query}
+                        onChange={(e) => search(e.target.value)}
+                    />
+                </div>
+                <div className="bar-links">
+                    <a href="https://wsnh2022.github.io" className="hide-sm">Portfolio</a>
+                    <a href={AUTHOR.github} className="hide-sm">GitHub</a>
+                    <ThemeToggle />
+                </div>
+            </nav>
+        </header>
+    );
+};
+
+export const Byline = ({ post, extra }) => (
+    <div className="byline">
+        <img className="avatar" src={AUTHOR.avatar} alt="" width="36" height="36" loading="lazy" />
+        <div>
+            <strong>{AUTHOR.name}</strong>
+            <span className="muted">
+                {post.date && <time dateTime={post.date}>{formatDate(post.date)}</time>}
+                {extra}
+            </span>
         </div>
-    </nav>
+    </div>
 );
 
-const pictured = posts.filter((p) => p.image).slice(-1)[0];
+export const AboutCard = () => (
+    <section className="card about" aria-label="About the author">
+        <div className="about-band" />
+        <div className="about-body">
+            <img className="avatar" src={AUTHOR.avatar} alt="" width="48" height="48" />
+            <a href={AUTHOR.github} className="about-name">{AUTHOR.name}</a>
+            <p className="about-bio">{AUTHOR.bio}</p>
+            <a href={AUTHOR.github} className="btn">Follow on GitHub</a>
+            <ul className="about-facts">
+                <li>{posts.length} posts</li>
+                <li>
+                    Portfolio: <a href="https://wsnh2022.github.io">wsnh2022.github.io</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+);
 
 export const Footer = () => (
     <footer className="footer">
-        {pictured && (
-            <img
-                className="footer-photo"
-                src={pictured.image}
-                alt={`Cover of ${pictured.title}`}
-                width="1600"
-                height="1000"
-                loading="lazy"
-            />
-        )}
-        <div className="footer-top" data-reveal>
-            <ul className="footer-links">
-                <li><Link to={{ pathname: '/', hash: '#posts' }}>All posts</Link></li>
-                <li><a href="https://github.com/wsnh2022">GitHub profile</a></li>
-                <li><a href="https://wsnh2022.github.io">Portfolio</a></li>
-            </ul>
-            <div className="footer-meta">
-                {pictured && (
-                    <p>Pictured: <Link to={`/post/${pictured.id}`}>{pictured.title}</Link></p>
-                )}
-                <p>Source: <a href="https://github.com/wsnh2022/blog">wsnh2022/blog</a></p>
-            </div>
-        </div>
-        <div className="footer-bottom">
-            <p className="footer-name" data-reveal aria-hidden="true">{SITE}</p>
-            <p className="footer-legal">
-                © {new Date().getFullYear()} {SITE}. Every post is a Markdown file; project posts are read live from their GitHub READMEs.
+        <div className="footer-inner">
+            <p>
+                © {new Date().getFullYear()} {AUTHOR.name} · <a href="https://github.com/wsnh2022/blog">Source on GitHub</a>
             </p>
+            <ul>
+                <li><Link to="/">All posts</Link></li>
+                <li><a href="https://wsnh2022.github.io">Portfolio</a></li>
+                <li><a href={AUTHOR.github}>GitHub</a></li>
+            </ul>
         </div>
     </footer>
 );

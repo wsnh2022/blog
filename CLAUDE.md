@@ -26,13 +26,15 @@ This is a React 18 + Vite SPA deployed to GitHub Pages at `wsnh2022.github.io/bl
 
 **Routing:** React Router v5 (`BrowserRouter` with `basename="/blog"`). Routes: `/` → `Home`, `/post/:id` → `Post`. SPA deep-link support on GitHub Pages is handled via a `404.html` redirect trick (see the most recent commit).
 
-**Shared page parts:** `src/site.jsx` holds the top bar (`SiteBar`), the photograph footer, `setPageMeta` (per-page `<title>` and meta description) and `useReveal` (scroll entrances: elements with `data-reveal` get `data-in` when they enter the viewport; the hidden start state only applies under `prefers-reduced-motion: no-preference` and the `motion` class set in `index.html`).
+**Shared page parts:** `src/site.jsx` holds the sticky top bar (`SiteBar`, whose search box writes `?q=` on the home URL), the author details (`AUTHOR`), `Byline`, `AboutCard`, the footer, `setPageMeta` (per-page `<title>` and meta description) and `useReveal` (scroll entrances: elements with `data-reveal` get `data-in` when they enter the viewport; the hidden start state only applies under `prefers-reduced-motion: no-preference` and the `motion` class set in `index.html`). `App.jsx` renders the bar and footer once around every route.
 
-**Home layout:** a split stage. The left column scrolls (hero, then the index grouped by month); the right column is a sticky preview of the post being pointed at or scrolled past. Below 860px it collapses to one column with the preview after the hero.
+**Home layout:** a dev.to-style feed of white cards on a grey page. The newest post gets a full-width cover; the rest show a thumbnail. A sidebar holds the about card and, once posts have tags, a Topics list (the six most-used topics also appear as tabs above the feed). Below 860px the sidebar is hidden.
 
-**Design rules:** styling is plain CSS with tokens in `src/index.css` (`--accent` `#4f46e5` is the brand colour; five type steps; square corners; no gradients, glass or resting shadows).
+**Post layout:** a left action rail (copy link, source, top), the article card (cover, byline with read time, extra-bold title, tags, then the Markdown body in `.prose`) and a right sidebar (author card, more posts, sticky "On this page"). h2/h3 get slug ids that feed the contents lists. For remote posts the README's first `#` heading and any copy of the cover image are dropped, since the card already shows both. Fenced code renders through `CodeBlock`: always dark (Prism One Dark), with a language label and Copy button.
 
-**Theme:** `ThemeToggle.jsx` (rendered inside `SiteBar`) writes `data-theme` on `<html>` and persists the value in `localStorage`. `Post.jsx` polls `localStorage` every 500ms to sync the syntax-highlighter theme (Prism One Dark / One Light).
+**Design rules:** plain CSS with tokens in `src/index.css`. System UI font stack (no web fonts), 19px body text, extra-bold titles, `--accent` `#4f46e5` as the brand colour and only accent, 8px radius, 1px borders instead of shadows, no gradients or glass.
+
+**Theme:** `ThemeToggle.jsx` (rendered inside `SiteBar`) writes `data-theme` on `<html>` and persists the value in `localStorage`; `index.html` applies the saved value before first paint.
 
 **Deployment:** pushing to `main` triggers `.github/workflows/deploy.yml`, which runs `npm run build` and uploads `dist/` to GitHub Pages via the official Actions. No manual deploy step needed.
 
@@ -45,7 +47,8 @@ Create `src/posts/my-post-slug.md`. Frontmatter is optional but recommended:
 title: "Post Title"
 date: "2026-01-15"
 image: "https://..."   # optional hero image URL
-description: "One sentence on what the post is."   # optional
+description: "One sentence on what the post is."   # optional, shown on the home card
+tags: "autohotkey, tools"   # optional, comma-separated
 ---
 ```
 

@@ -2,6 +2,8 @@
 title: "AHKMenu - AutoHotkey Menu Builder"
 date: "2026-04-17"
 image: "https://github.com/wsnh2022/wsnh2022.github.io/blob/main/assets/images/projects/ahkmenu.png?raw=true"
+description: "Build AutoHotkey v2 right-click menus in your browser and export a ready-to-run script."
+tags: "autohotkey, webapp, productivity"
 ---
 
 A browser-based tool for visually building AutoHotkey v2 context menus. Configure icons, labels, and actions - then export a ready-to-run `.ahk` script with one click.

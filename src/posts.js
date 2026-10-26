@@ -46,8 +46,9 @@ const parse = (path) => {
         title = header ? header[1].trim() : titleFromId(id);
     }
 
-    const summary = field(yaml, 'description') || (remoteUrl ? `Read live from the ${repo} README on GitHub.` : '');
-    const description = summary || firstParagraph(content);
+    const summary = field(yaml, 'description');
+    const description = summary || (remoteUrl ? '' : firstParagraph(content));
+    const tags = field(yaml, 'tags').replace(/[[\]#]/g, '').split(',').map((t) => t.trim().toLowerCase()).filter(Boolean);
 
     return {
         id,
@@ -56,6 +57,7 @@ const parse = (path) => {
         image: field(yaml, 'image') || null,
         description,
         summary,
+        tags,
         remoteUrl,
         repo,
         content,
@@ -68,6 +70,11 @@ export const posts = Object.keys(modules)
     .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
 export const getPost = (id) => posts.find((p) => p.id === id);
+
+export const allTags = [...new Set(posts.flatMap((p) => p.tags))].sort();
+
+const tagCount = (tag) => posts.filter((p) => p.tags.includes(tag)).length;
+export const topTags = [...allTags].sort((a, b) => tagCount(b) - tagCount(a)).slice(0, 6);
 
 const asDate = (iso) => {
     const d = new Date(`${iso}T00:00:00`);

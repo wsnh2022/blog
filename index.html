@@ -6,14 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>wsnh2022 blog: tools I build and what I learn</title>
     <meta name="description" content="Write-ups of the tools I build and notes on what I learn, each project post read live from its GitHub README." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" />
 </head>
 
 <body>
     <div id="root"></div>
     <script>
+      try { document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light'); } catch (e) {}
       if ('IntersectionObserver' in window) document.documentElement.classList.add('motion');
     </script>
     <script>

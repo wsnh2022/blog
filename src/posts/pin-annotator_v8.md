@@ -2,6 +2,8 @@
 title: "Pin Annotator - Private Image Annotation"
 date: "2026-04-17"
 image: "https://github.com/wsnh2022/wsnh2022.github.io/blob/main/assets/images/projects/pin-annotator.png?raw=true"
+description: "Pin numbered notes onto any image right in your browser. Nothing gets uploaded."
+tags: "webapp, privacy"
 ---
 
 A client-side image annotation tool. Drop in any image, place numbered pins, add notes, and export your annotated session - all without uploading anything to a server.

@@ -1,19 +1,16 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { SiteBar, setPageMeta } from './site';
+import { setPageMeta } from './site';
 
 const NotFound = () => {
     useEffect(() => setPageMeta('Not found'), []);
 
     return (
-        <div className="page">
-            <div className="sheet missing">
-                <SiteBar />
-                <h1>404 - Not Found</h1>
-                <p>The page you are looking for does not exist.</p>
-                <Link to="/" className="button">Back to Blog</Link>
-            </div>
-        </div>
+        <main className="card missing">
+            <h1>This page doesn't exist</h1>
+            <p>The link may be old, or the post may have moved.</p>
+            <Link to="/" className="btn">Back to all posts</Link>
+        </main>
     );
 };
 
