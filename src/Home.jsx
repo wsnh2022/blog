@@ -1,120 +1,142 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { posts, groupByMonth, formatDate } from './posts';
+import { SiteBar, Footer, setPageMeta, useReveal } from './site';
+
+const groups = groupByMonth(posts);
+const staged = posts.filter((p) => p.image);
 
 const Home = () => {
-    const [posts, setPosts] = useState([]);
+    const location = useLocation();
+    const [active, setActive] = useState(staged[0]?.id);
+    const activePost = staged.find((p) => p.id === active) || staged[0];
+
+    useReveal('home');
 
     useEffect(() => {
-        // Vite's magic glob to find all .md files in src/posts
-        const postModules = import.meta.glob('./posts/*.md', { query: '?raw', import: 'default', eager: true });
+        setPageMeta();
+        if (location.hash === '#posts') document.getElementById('posts')?.scrollIntoView();
+    }, [location.hash]);
 
-        const postData = Object.keys(postModules).map((path) => {
-            const filename = path.split('/').pop();
-            const id = filename.replace('.md', '');
-            const text = postModules[path].trim();
-
-            // DEFAULT VALUES
-            let title = id.split(/[-_]/).join(' ').replace(/\b\w/g, l => l.toUpperCase());
-            let date = 'Project Post';
-            let content = text;
-            let image = null;
-            let isRemote = false;
-
-            // 1. CHECK FOR FRONTMATTER
-            if (text.startsWith('---')) {
-                const parts = text.split('---');
-                if (parts.length >= 3) {
-                    const yaml = parts[1];
-                    content = parts.slice(2).join('---').trim();
-
-                    const titleMatch = yaml.match(/title:\s*(.*)/);
-                    const dateMatch = yaml.match(/date:\s*(.*)/);
-                    const imageMatch = yaml.match(/image:\s*(.*)/);
-
-                    if (titleMatch) title = titleMatch[1].replace(/['"]/g, '').trim();
-                    if (dateMatch) date = dateMatch[1].replace(/['"]/g, '').trim();
-                    if (imageMatch) image = imageMatch[1].replace(/['"]/g, '').trim();
-                }
-            }
-
-            // 2. CHECK FOR GITHUB URL IN CONTENT
-            const firstLine = content.split('\n')[0].trim();
-            if (firstLine.startsWith('https://github.com/')) {
-                isRemote = true;
-            }
-
-            // 3. FALLBACK TITLE DETECTION (If not in frontmatter)
-            if (title === id.split(/[-_]/).join(' ').replace(/\b\w/g, l => l.toUpperCase()) || !title) {
-                // Find first # Header in content (ignoring HTML tags at start)
-                const headerMatch = content.match(/^#\s+(.*)/m);
-                if (headerMatch) {
-                    title = headerMatch[1].trim();
-                }
-            }
-
-            return {
-                id,
-                title,
-                date,
-                image,
-                isRemote,
-                excerpt: content.slice(0, 150).replace(/[#*`]/g, '').replace(/<[^>]*>?/gm, '').trim() + '...',
-            };
-        });
-
-        // Sort posts by date (optional, here we just keep finding order)
-        setPosts(postData);
+    useEffect(() => {
+        if (!('IntersectionObserver' in window)) return undefined;
+        const io = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((e) => {
+                    if (e.isIntersecting && e.target.dataset.staged) setActive(e.target.dataset.id);
+                });
+            },
+            { rootMargin: '-45% 0px -45% 0px' }
+        );
+        document.querySelectorAll('.entry').forEach((el) => io.observe(el));
+        return () => io.disconnect();
     }, []);
 
-    return (
-        <div className="container">
-            <header>
-                <h1>My Dynamic Blog</h1>
-                <p>Live-syncing with GitHub and local Markdown.</p>
-            </header>
+    const latest = posts[0];
 
-            <div className="posts-grid">
-                {posts.map((post) => (
-                    <Link to={`/post/${post.id}`} key={post.id} className="post-card">
-                        <div className="card-image-container">
-                            {post.image ? (
-                                <img src={post.image} alt={post.title} className="card-image" />
-                            ) : (
-                                <div className="card-image" style={{ background: 'var(--header-grad)', opacity: 0.8 }} />
-                            )}
-                            {post.isRemote && (
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '1rem',
-                                    right: '1rem',
-                                    background: 'var(--primary-color)',
-                                    color: 'white',
-                                    padding: '0.25rem 0.75rem',
-                                    borderRadius: '1rem',
-                                    fontSize: '0.75rem',
-                                    fontWeight: 'bold',
-                                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                                }}>
-                                    Live Sync
+    return (
+        <>
+            <div className="split">
+                <div className="reading">
+                    <section className="sheet hero" aria-labelledby="hero-title">
+                        <SiteBar />
+                        <div className="hero-body">
+                            <h1 id="hero-title" data-reveal style={{ '--d': '60ms' }}>
+                                What I build and learn
+                            </h1>
+                            <p className="lede" data-reveal style={{ '--d': '140ms' }}>
+                                A blog of my open-source tools and tech notes, each project post read live from its GitHub README.
+                            </p>
+                            {latest && (
+                                <div data-reveal style={{ '--d': '220ms' }}>
+                                    <Link className="button" to={`/post/${latest.id}`}>
+                                        Read the newest post
+                                    </Link>
                                 </div>
                             )}
                         </div>
-                        <div className="card-content">
-                            <div className="post-date" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>{post.date}</div>
-                            <h2>{post.title}</h2>
-                            <p>{post.excerpt}</p>
-                            <span className="read-more">Read Full Post</span>
-                        </div>
-                    </Link>
-                ))}
-            </div>
+                    </section>
 
-            {posts.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '4rem' }}>
-                    <p>No posts found. Add .md files to your <code>src/posts</code> folder!</p>
+                    <section className="sheet index" id="posts" aria-labelledby="posts-title">
+                        <h2 id="posts-title" data-reveal>All posts</h2>
+                        <p className="note" data-reveal style={{ '--d': '70ms' }}>
+                            {posts.length} posts, newest first.
+                            <span className="note-wide"> Point at one to bring its cover onto the stage.</span>
+                        </p>
+
+                        {groups.map((group) => (
+                            <div className="group" key={group.name}>
+                                <h3 data-reveal>{group.name}</h3>
+                                <ol className="entries">
+                                    {group.posts.map((post, i) => (
+                                        <li key={post.id} data-reveal style={{ '--d': `${70 + i * 70}ms` }}>
+                                            <Link
+                                                to={`/post/${post.id}`}
+                                                className="entry"
+                                                data-id={post.id}
+                                                data-staged={post.image ? 'yes' : undefined}
+                                                aria-current={post.id === active ? 'true' : undefined}
+                                                onMouseEnter={() => post.image && setActive(post.id)}
+                                                onFocus={() => post.image && setActive(post.id)}
+                                            >
+                                                {post.image && (
+                                                    <img
+                                                        className="entry-thumb"
+                                                        src={post.image}
+                                                        alt=""
+                                                        width="1600"
+                                                        height="1000"
+                                                        loading="lazy"
+                                                    />
+                                                )}
+                                                <span className="entry-title">{post.title}</span>
+                                                <time className="entry-date" dateTime={post.date}>
+                                                    {formatDate(post.date)}
+                                                </time>
+                                                <span className="entry-desc">{post.description}</span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
+                        ))}
+
+                        {posts.length === 0 && <p>No posts yet. Add a Markdown file to src/posts.</p>}
+
+                        <p className="index-close" data-reveal>
+                            Every post is a Markdown file in the wsnh2022/blog repository.
+                            <br />
+                            Project posts refresh from their README on every visit.
+                        </p>
+                    </section>
                 </div>
-            )}
-        </div>
+
+                {activePost && (
+                    <aside className="stage" aria-label="Preview of the selected post">
+                        <div className="stage-frame">
+                            {staged.map((post, i) => (
+                                <img
+                                    key={post.id}
+                                    className="stage-img"
+                                    data-active={post.id === activePost.id ? 'true' : undefined}
+                                    src={post.image}
+                                    alt={post.id === activePost.id ? `Cover of ${post.title}` : ''}
+                                    width="1600"
+                                    height="1000"
+                                    loading={i === 0 ? 'eager' : 'lazy'}
+                                />
+                            ))}
+                        </div>
+                        <Link to={`/post/${activePost.id}`} className="stage-text" key={activePost.id}>
+                            <span className="stage-title">{activePost.title}</span>
+                            <span className="stage-desc">{activePost.description}</span>
+                            <time dateTime={activePost.date}>{formatDate(activePost.date)}</time>
+                        </Link>
+                    </aside>
+                )}
+            </div>
+            <Footer />
+        </>
     );
 };
 

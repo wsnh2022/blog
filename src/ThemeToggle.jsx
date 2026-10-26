@@ -14,12 +14,13 @@ const ThemeToggle = () => {
 
     return (
         <button
-            className="theme-toggle"
+            type="button"
+            className="bar-link theme-toggle"
             onClick={toggleTheme}
             aria-label="Toggle Theme"
             title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
         >
-            {theme === 'light' ? '🌙' : '☀️'}
+            {theme === 'light' ? 'Dark' : 'Light'}
         </button>
     );
 };
