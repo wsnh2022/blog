@@ -57,6 +57,38 @@ const CodeBlock = ({ lang, text }) => {
     );
 };
 
+let mermaidCount = 0;
+
+// Loads mermaid only when a post has a diagram, and redraws it when the theme changes.
+const Mermaid = ({ text }) => {
+    const [svg, setSvg] = useState('');
+    const [failed, setFailed] = useState(false);
+    const [theme, setTheme] = useState(document.documentElement.dataset.theme);
+
+    useEffect(() => {
+        const mo = new MutationObserver(() => setTheme(document.documentElement.dataset.theme));
+        mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        return () => mo.disconnect();
+    }, []);
+
+    useEffect(() => {
+        let live = true;
+        import('mermaid')
+            .then(({ default: mermaid }) => {
+                mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: theme === 'dark' ? 'dark' : 'default' });
+                return mermaid.render(`mermaid-${++mermaidCount}`, text);
+            })
+            .then((result) => live && setSvg(result.svg))
+            .catch(() => live && setFailed(true));
+        return () => {
+            live = false;
+        };
+    }, [text, theme]);
+
+    if (failed) return <CodeBlock lang="mermaid" text={text} />;
+    return <div className="diagram" role="img" aria-label="Diagram" dangerouslySetInnerHTML={{ __html: svg }} />;
+};
+
 const fileName = (url) => (url || '').split('?')[0].split('/').pop().toLowerCase();
 
 const makeComponents = (cover) => ({
@@ -69,6 +101,7 @@ const makeComponents = (cover) => ({
         const child = Array.isArray(children) ? children[0] : children;
         if (!child?.props) return <pre {...props}>{children}</pre>;
         const lang = /language-(\w+)/.exec(child.props.className || '')?.[1] || 'text';
+        if (lang === 'mermaid') return <Mermaid text={textOf(child.props.children)} />;
         return <CodeBlock lang={lang} text={textOf(child.props.children).replace(/\n$/, '')} />;
     },
 });
