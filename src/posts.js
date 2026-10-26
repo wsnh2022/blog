@@ -1,3 +1,5 @@
+import about from 'virtual:repo-about';
+
 const modules = import.meta.glob('./posts/*.md', { query: '?raw', import: 'default', eager: true });
 
 const titleFromId = (id) => id.split(/[-_]/).join(' ').replace(/\b\w/g, (l) => l.toUpperCase());
@@ -46,7 +48,7 @@ const parse = (path) => {
         title = header ? header[1].trim() : titleFromId(id);
     }
 
-    const summary = field(yaml, 'description');
+    const summary = about[repo.toLowerCase()] || field(yaml, 'description');
     const description = summary || (remoteUrl ? '' : firstParagraph(content));
     const tags = field(yaml, 'tags').replace(/[[\]#]/g, '').split(',').map((t) => t.trim().toLowerCase()).filter(Boolean);
 

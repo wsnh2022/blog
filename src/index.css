@@ -460,6 +460,11 @@ img[data-broken] {
 .entry-desc {
     margin: 4px 0 8px;
     color: var(--ink-soft);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
 }
 
 .entry .tags {
