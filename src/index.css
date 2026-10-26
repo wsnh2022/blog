@@ -128,6 +128,11 @@ button {
     text-decoration: none;
 }
 
+.tags li:not(:has(button)) {
+    padding: 3px 7px;
+    color: var(--ink-soft);
+}
+
 .tags a:hover,
 .tags button:hover {
     background: var(--surface);
